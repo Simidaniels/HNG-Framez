@@ -4,8 +4,20 @@ export const PostContext = createContext();
 
 export function PostProvider({ children }) {
   const [posts, setPosts] = useState([
-    { id: "1", author: "Daniel", content: "My first Framez post 🎬", image: null },
-    { id: "2", author: "Jane", content: "Loving this new app!", image: null },
+    {
+      id: "1",
+      author: "Daniel",
+      content: "My first Framez post 🎬",
+      image: null,
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      author: "Jane",
+      content: "Loving this new app!",
+      image: null,
+      timestamp: new Date().toISOString(),
+    },
   ]);
 
   // Add a new post with optional image
@@ -14,7 +26,8 @@ export function PostProvider({ children }) {
       id: (posts.length + 1).toString(),
       author: "You",
       content,
-      image, // image URI or null
+      image, // optional image URI
+      timestamp: new Date().toISOString(), // current time
     };
     setPosts([newPost, ...posts]); // newest posts on top
   };
