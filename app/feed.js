@@ -5,7 +5,7 @@ import { PostContext } from "../src/context/postContext";
 
 export default function Feed() {
   const router = useRouter();
-  const { posts } = useContext(PostContext);
+  const { posts, deletePost } = useContext(PostContext); // ✅ get deletePost
 
   return (
     <View style={styles.container}>
@@ -17,10 +17,18 @@ export default function Feed() {
           <View style={styles.post}>
             <Text style={styles.author}>{item.author}</Text>
             <Text>{item.content}</Text>
-            <Button
-              title="View Profile"
-              onPress={() => router.push(`/profile?userId=${item.id}`)}
-            />
+            <View style={styles.buttons}>
+              <Button
+                title="View Profile"
+                onPress={() => router.push(`/profile?userId=${item.id}`)}
+              />
+              {/* ✅ Delete button */}
+              <Button
+                title="Delete"
+                color="red"
+                onPress={() => deletePost(item.id)}
+              />
+            </View>
           </View>
         )}
       />
@@ -34,4 +42,5 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
   post: { marginBottom: 15, padding: 10, borderWidth: 1, borderRadius: 5 },
   author: { fontWeight: "bold", marginBottom: 5 },
+  buttons: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 }, // added layout for buttons
 });

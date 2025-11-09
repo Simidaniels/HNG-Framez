@@ -14,11 +14,16 @@ export function PostProvider({ children }) {
       author: "You",
       content,
     };
-    setPosts([newPost, ...posts]); // newest posts on top
+    setPosts([newPost, ...posts]);
+  };
+
+  // ✅ Delete post function
+  const deletePost = (id) => {
+    setPosts(posts.filter((post) => post.id !== id));
   };
 
   return (
-    <PostContext.Provider value={{ posts, addPost }}>
+    <PostContext.Provider value={{ posts, addPost, deletePost }}>
       {children}
     </PostContext.Provider>
   );
