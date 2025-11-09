@@ -1,44 +1,67 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Link, useRouter } from "expo-router";
+import { useAuth } from "../src/context/AuthContext";
 
 export default function SignupScreen() {
+  const router = useRouter();
+  const { signup } = useAuth(); // get signup function from AuthContext
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  const [error, setError] = useState("");
 
-  const handleSignup = () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please fill in both fields");
+  const handleSignup = async () => {
+    setError(""); // clear previous errors
+
+    if (!email.trim() || !password) {
+      setError("Please enter both email and password.");
       return;
     }
 
-    // TODO: Replace this with Firebase signup logic
-    console.log("Sign up with:", email, password);
-
-    // Navigate to home after signup
-    router.push("./feed.js");
+    try {
+      await signup(email.trim(), password); // Firebase signup
+      router.replace("/feed"); // navigate to feed after signup
+    } catch (err) {
+      console.log("Signup error:", err);
+      // Show friendly error messages
+      switch (err.code) {
+        case "auth/email-already-in-use":
+          setError("This email is already registered.");
+          break;
+        case "auth/invalid-email":
+          setError("Invalid email address.");
+          break;
+        case "auth/weak-password":
+          setError("Password is too weak. Minimum 6 characters required.");
+          break;
+        default:
+          setError("Signup failed. Please try again.");
+      }
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create a Framez Account</Text>
 
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
       <TextInput
         style={styles.input}
         placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
         value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
       />
 
       <TextInput
         style={styles.input}
         placeholder="Password"
-        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSignup}>
@@ -63,7 +86,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "700",
     color: "#111",
-    marginBottom: 32,
+    marginBottom: 24,
     textAlign: "center",
   },
   input: {
@@ -91,5 +114,11 @@ const styles = StyleSheet.create({
     color: "#007AFF",
     textAlign: "center",
     fontSize: 16,
+  },
+  error: {
+    color: "red",
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 14,
   },
 });
