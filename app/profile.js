@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from "react-native";
 import { PostContext } from "../src/context/postContext";
 import { useAuth } from "../src/context/AuthContext";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
   const { posts } = useContext(PostContext);
   const { user } = useAuth(); // get logged-in user
+  const router = useRouter();
 
   // If user is not loaded yet
   if (!user) {
@@ -23,6 +25,11 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Create Post Button */}
+      <TouchableOpacity style={styles.createPostButton} onPress={() => router.push("/createPost")}>
+        <Text style={styles.createPostText}>+ Create Post</Text>
+      </TouchableOpacity>
+
       {/* User avatar */}
       <Image
         source={{
@@ -59,6 +66,14 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: "center", padding: 20, backgroundColor: "#fff" },
+  createPostButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  createPostText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   avatar: { width: 100, height: 100, borderRadius: 50, marginBottom: 20 },
   name: { fontSize: 22, fontWeight: "700" },
   email: { fontSize: 16, color: "#555" },
