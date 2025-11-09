@@ -42,8 +42,16 @@ export default function CreatePost() {
         multiline
       />
       {image && <Image source={{ uri: image }} style={styles.preview} />}
-      <Button title="Pick an Image" onPress={pickImage} />
-      <Button title="Post" onPress={handlePost} />
+
+      {/* Buttons side by side */}
+      <View style={styles.buttonContainer}>
+        <View style={styles.button}>
+          <Button title="Pick an Image" onPress={pickImage} />
+        </View>
+        <View style={styles.button}>
+          <Button title="Post" onPress={handlePost} />
+        </View>
+      </View>
     </View>
   );
 }
@@ -65,5 +73,13 @@ const styles = StyleSheet.create({
     height: 200,
     marginBottom: 10,
     borderRadius: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between", // spread buttons apart
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 5, // spacing between buttons
   },
 });
