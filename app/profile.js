@@ -1,27 +1,46 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet, Image, FlatList } from "react-native";
 import { PostContext } from "../src/context/postContext";
+import { useAuth } from "../src/context/AuthContext";
 
 export default function ProfileScreen() {
   const { posts } = useContext(PostContext);
+  const { user } = useAuth(); // get logged-in user
 
-  // Mock logged-in user
-  const user = {
-    name: "Daniel Adepitan",
-    email: "daniel@example.com",
-    avatar: "https://ui-avatars.com/api/?name=Daniel+Adepitan",
-  };
+  // If user is not loaded yet
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading profile...</Text>
+      </View>
+    );
+  }
 
-  // Filter posts created by this user
-  const userPosts = posts.filter((post) => post.author === user.name || post.author === "You");
+  // Filter posts created by this logged-in user
+  const userPosts = posts.filter(
+    (post) => post.author === user.displayName || post.author === "You"
+  );
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: user.avatar }} style={styles.avatar} />
-      <Text style={styles.name}>{user.name}</Text>
+      {/* User avatar */}
+      <Image
+        source={{
+          uri:
+            user.photoURL ||
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              user.displayName || "User"
+            )}`,
+        }}
+        style={styles.avatar}
+      />
+
+      {/* User info */}
+      <Text style={styles.name}>{user.displayName || "Anonymous"}</Text>
       <Text style={styles.email}>{user.email}</Text>
       <Text style={styles.posts}>Posts: {userPosts.length}</Text>
 
+      {/* User posts */}
       <FlatList
         data={userPosts}
         keyExtractor={(item) => item.id}
