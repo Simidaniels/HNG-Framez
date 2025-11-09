@@ -40,30 +40,33 @@ Join our community of developers creating universal apps.
 Framez is a lightweight social media app built with React Native and Expo Router. Users can sign up, log in, create posts with text and images, view a live feed, and manage their profiles. The app is designed to provide a simple, intuitive, and elegant social experience on mobile devices.
 
 ## Features
-** Authentication
+
+## Authentication
 Secure signup and login with email and password using Firebase Authentication
 Persistent login sessions until the user logs out
 Friendly error messages for invalid input, already registered email, or weak password
 
-** Feed
+## Feed
 Dynamic feed showing posts from all users
 Each post displays author, timestamp, content, and image (optional)
 Delete posts functionality for posts you created
 
-** Create Post
+## Create Post
 Create posts with text content and optional images
 Live updates to the feed after creating a post
 Simple image picker powered by Expo Image Picker
 
-** Profile
+## Profile
 View your profile details including name, email, and avatar
 View all posts created by you
 Quick access to create a new post directly from your profile
 Logout button to securely exit the account
 
-** Navigation
+## Navigation
 Navigation handled using Expo Router Stack
 Smooth transitions between Login, Signup, Feed, Profile, and Create Post pages
+
+
 
 ## Tech Stack
 
