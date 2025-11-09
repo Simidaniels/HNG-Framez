@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
-import { View, Text, FlatList, StyleSheet, Button } from "react-native";
+import { View, Text, FlatList, StyleSheet, Button, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { PostContext } from "../src/context/postContext";
 
 export default function Feed() {
   const router = useRouter();
-  const { posts, deletePost } = useContext(PostContext); // ✅ get deletePost
+  const { posts, deletePost } = useContext(PostContext);
 
   return (
     <View style={styles.container}>
@@ -17,12 +17,15 @@ export default function Feed() {
           <View style={styles.post}>
             <Text style={styles.author}>{item.author}</Text>
             <Text>{item.content}</Text>
+
+            {/* ✅ Display image if it exists */}
+            {item.image && <Image source={{ uri: item.image }} style={styles.image} />}
+
             <View style={styles.buttons}>
               <Button
                 title="View Profile"
                 onPress={() => router.push(`/profile?userId=${item.id}`)}
               />
-              {/* ✅ Delete button */}
               <Button
                 title="Delete"
                 color="red"
@@ -42,5 +45,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
   post: { marginBottom: 15, padding: 10, borderWidth: 1, borderRadius: 5 },
   author: { fontWeight: "bold", marginBottom: 5 },
-  buttons: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 }, // added layout for buttons
+  buttons: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
+  image: { width: "100%", height: 200, marginVertical: 10, borderRadius: 10 }, // added style for post images
 });
