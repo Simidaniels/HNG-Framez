@@ -1,26 +1,58 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from "react-native";
 import { PostContext } from "../src/context/postContext";
+import { useAuth } from "../src/context/AuthContext";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
   const { posts } = useContext(PostContext);
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
-  // Mock logged-in user
-  const user = {
-    name: "Daniel Adepitan",
-    email: "daniel@example.com",
-    avatar: "https://ui-avatars.com/api/?name=Daniel+Adepitan",
+  // If no user is logged in yet (still loading or logged out)
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading profile...</Text>
+      </View>
+    );
+  }
+
+  // Filter posts created by this logged-in user
+  const userPosts = posts.filter(
+    (post) => post.author === user.displayName || post.author === user.email
+  );
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace("/login");
+    } catch (err) {
+      console.log("Logout error:", err);
+      alert("Failed to log out. Please try again.");
+    }
   };
-
-  // Filter posts created by this user
-  const userPosts = posts.filter((post) => post.author === user.name || post.author === "You");
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: user.avatar }} style={styles.avatar} />
-      <Text style={styles.name}>{user.name}</Text>
+      <Image
+        source={{
+          uri:
+            user.photoURL ||
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              user.displayName || user.email || "User"
+            )}`,
+        }}
+        style={styles.avatar}
+      />
+
+      <Text style={styles.name}>{user.displayName || "Anonymous"}</Text>
       <Text style={styles.email}>{user.email}</Text>
       <Text style={styles.posts}>Posts: {userPosts.length}</Text>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
 
       <FlatList
         data={userPosts}
@@ -44,6 +76,14 @@ const styles = StyleSheet.create({
   name: { fontSize: 22, fontWeight: "700" },
   email: { fontSize: 16, color: "#555" },
   posts: { marginTop: 10, fontSize: 16 },
+  logoutButton: {
+    marginTop: 20,
+    backgroundColor: "#FF3B30",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+  },
+  logoutText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   post: {
     padding: 10,
     borderWidth: 1,

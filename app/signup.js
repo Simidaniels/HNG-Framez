@@ -1,28 +1,49 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { Link, useRouter } from "expo-router";
+import { useAuth } from "../src/context/AuthContext"; // ✅ import from your auth context
 
 export default function SignupScreen() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { signup } = useAuth(); // ✅ use the signup method from AuthContext
 
-  const handleSignup = () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please fill in both fields");
+  const handleSignup = async () => {
+    if (!name || !email || !password) {
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    // TODO: Replace this with Firebase signup logic
-    console.log("Sign up with:", email, password);
-
-    // Navigate to home after signup
-    router.push("./feed.js");
+    try {
+      await signup(email, password, name); // ✅ create user in Firebase
+      Alert.alert("Success", "Account created successfully!");
+      router.replace("/feed"); // ✅ go to feed screen
+    } catch (error) {
+      console.error("Signup Error:", error);
+      Alert.alert("Signup Failed", error.message || "Try again later");
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create a Framez Account</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Full Name"
+        autoCapitalize="words"
+        value={name}
+        onChangeText={setName}
+      />
 
       <TextInput
         style={styles.input}
